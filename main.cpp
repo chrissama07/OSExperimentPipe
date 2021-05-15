@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
+#include <wait.h>
 
 int pid1, pid2;
 
@@ -16,7 +17,7 @@ int main() {
         write(fd[1], OutPipe, 50);
         sleep(1);
         lockf(fd[1], 0, 0);
-        exit(0);
+        _exit;
     } else {
         while((pid2 = fork()) == -1);
         if(pid2 == 0) {
@@ -26,7 +27,7 @@ int main() {
             write(fd[1], OutPipe, 50);
             sleep(1);
             lockf(fd[1], 0, 0);
-            exit(0);
+            _exit;
         } else {
             printf("parent\n");
             wait(0);
@@ -34,8 +35,8 @@ int main() {
             printf("%s\n", InPipe);
             wait(0);
             read(fd[0], InPipe, 50);
-            printf("$s\n", InPipe);
-            exit(0);
+            printf("%s\n", InPipe);
+            _exit;
         }
     }
     return 0;
